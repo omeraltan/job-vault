@@ -1,10 +1,10 @@
 package com.omer.candidate.constants;
 
-public class AccountsConstants {
+public class CandidatesConstants {
 
     public static final String SYSTEM_USER = "SYSTEM";
 
-    private AccountsConstants() {
+    private CandidatesConstants() {
 
     }
 
