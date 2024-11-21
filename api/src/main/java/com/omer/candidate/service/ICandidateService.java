@@ -8,7 +8,7 @@ public interface ICandidateService {
 
     void createCandidate(CandidateDto candidateDto);
 
-    void updateCandidate(CandidateDto candidateDto);
+    void updateCandidate(Long id, CandidateDto candidateDto);
 
     boolean deleteCandidate(Long id);
 

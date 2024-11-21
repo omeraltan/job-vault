@@ -1,10 +1,12 @@
 package com.omer.candidate;
 
+import com.omer.candidate.utility.FileUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -31,10 +33,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
         url = "https://www.job-vault.com/swagger-ui.html"
     )
 )
-public class ApiApplication {
+public class ApiApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(ApiApplication.class, args);
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+        String resumesPath = System.getProperty("user.dir") + "/resumes";
+        FileUtils.clearDirectory(resumesPath);
+        System.out.println("Resumes directory cleared at startup.");
+    }
 }
