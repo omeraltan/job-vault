@@ -10,7 +10,7 @@ public interface ICandidateService {
 
     void updateCandidate(CandidateDto candidateDto);
 
-    void deleteCandidate(Long id);
+    boolean deleteCandidate(Long id);
 
     CandidateDto fetchCandidate(Long id);
 
