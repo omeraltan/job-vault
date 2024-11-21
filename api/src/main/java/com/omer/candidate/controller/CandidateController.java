@@ -16,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Ömer ALTAN
@@ -57,12 +55,49 @@ public class CandidateController {
         )
     }
     )
-    @PostMapping("/create")
-    public ResponseEntity<ResponseDto> createCandidate(@Valid CandidateDto candidateDto) {
+    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> createCandidate(@Valid @ModelAttribute CandidateDto candidateDto) {
         candidateService.createCandidate(candidateDto);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(new ResponseDto(CandidatesConstants.STATUS_201, CandidatesConstants.MESSAGE_201));
+    }
+
+    @Operation(
+        summary = "Delete Candidate REST API",
+        description = "REST API to delete Candidate by id"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "HTTP Status OK"
+        ),
+        @ApiResponse(
+            responseCode = "417",
+            description = "Expectation Failed"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "HTTP Status Internal Server Error",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponseDto.class)
+            )
+        )
+    }
+    )
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto> deleteCandidate(@RequestParam Long id) {
+        boolean isDeleted = candidateService.deleteCandidate(id);
+        if(isDeleted) {
+            return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDto(CandidatesConstants.STATUS_200, CandidatesConstants.MESSAGE_200));
+        }else {
+            return ResponseEntity
+                .status(HttpStatus.EXPECTATION_FAILED)
+                .body(new ResponseDto(CandidatesConstants.STATUS_417, CandidatesConstants.MESSAGE_417_DELETE));
+        }
+
     }
 
 }

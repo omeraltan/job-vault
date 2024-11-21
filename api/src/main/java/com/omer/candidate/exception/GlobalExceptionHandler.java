@@ -1,6 +1,7 @@
 package com.omer.candidate.exception;
 
 import com.omer.candidate.dto.ErrorResponseDto;
+import com.omer.candidate.dto.ResponseDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -50,6 +51,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EmailAlreadyExistException.class)
     public ResponseEntity<ErrorResponseDto> handleEmailAlreadyExistsException(EmailAlreadyExistException exception, WebRequest webRequest) {
 
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+            webRequest.getDescription(false),
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage(),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException exception, WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+            webRequest.getDescription(false),
+            HttpStatus.BAD_REQUEST,
+            exception.getMessage(),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FailedCvException.class)
+    public ResponseEntity<ErrorResponseDto> handleFailedCvException(FailedCvException exception, WebRequest webRequest) {
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
             webRequest.getDescription(false),
             HttpStatus.BAD_REQUEST,

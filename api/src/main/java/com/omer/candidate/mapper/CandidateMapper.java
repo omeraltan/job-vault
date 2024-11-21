@@ -4,11 +4,12 @@ import com.omer.candidate.dto.CandidateDto;
 import com.omer.candidate.entity.Candidate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface CandidateMapper {
 
-    CandidateMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CandidateMapper.class);
+    CandidateMapper INSTANCE = Mappers.getMapper(CandidateMapper.class);
 
     // Entity to DTO
     CandidateDto toCandidateDto(Candidate candidate);
