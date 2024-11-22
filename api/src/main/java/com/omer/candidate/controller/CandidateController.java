@@ -6,6 +6,7 @@ import com.omer.candidate.dto.ErrorResponseDto;
 import com.omer.candidate.dto.ResponseDto;
 import com.omer.candidate.service.ICandidateService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,6 +40,40 @@ public class CandidateController {
 
     public CandidateController(ICandidateService candidateService) {
         this.candidateService = candidateService;
+    }
+
+    @Operation(
+        summary = "Fetch Candidate Details by ID",
+        description = "This API retrieves the candidate details by their unique ID."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successfully fetched candidate details",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = CandidateDto.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Candidate not found for the given ID",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponseDto.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error, unexpected condition encountered",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponseDto.class)
+            )
+        )
+    })
+    @GetMapping("/candidates/{id}")
+    public ResponseEntity<CandidateDto> fetchCandidateById(@PathVariable Long id){
+        CandidateDto candidateDto = candidateService.fetchCandidate(id);
+        return ResponseEntity.ok(candidateDto);
     }
 
     @Operation(
@@ -158,7 +193,53 @@ public class CandidateController {
             return status(HttpStatus.EXPECTATION_FAILED)
                 .body(new ResponseDto(CandidatesConstants.STATUS_417, CandidatesConstants.MESSAGE_417_DELETE));
         }
+    }
 
+    @GetMapping("/candidates/filter")
+    @Operation(
+        summary = "Fetch Candidates with Filters",
+        description = "Fetch candidates based on optional filters like position type, military status, and notice period. " +
+            "Available values for filters are provided below.",
+        parameters = {
+            @Parameter(
+                name = "positionType",
+                description = "Filter candidates by position type",
+                example = "BACKEND_DEVELOPER",
+                schema = @Schema(allowableValues = {"BACKEND_DEVELOPER", "FRONTEND_DEVELOPER", "FULL_STACK_DEVELOPER"})
+            ),
+            @Parameter(
+                name = "militaryStatus",
+                description = "Filter candidates by military status",
+                example = "DONE",
+                schema = @Schema(allowableValues = {"DONE", "NOT_DONE"})
+            ),
+            @Parameter(
+                name = "noticePeriod",
+                description = "Filter candidates by notice period",
+                example = "FIVE_DAYS",
+                schema = @Schema(allowableValues = {"FIVE_DAYS", "TEN_DAYS", "ONE_WEEK", "TWO_WEEKS", "THREE_WEEKS", "ONE_MONTH"})
+            )
+        }
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Candidates fetched successfully",
+            content = @Content(schema = @Schema(implementation = CandidateDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "No candidates found matching the filters",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
+        )
+    })
+    public ResponseEntity<List<CandidateDto>> fetchCandidatesWithFilters(
+        @RequestParam(required = false) String positionType,
+        @RequestParam(required = false) String militaryStatus,
+        @RequestParam(required = false) String noticePeriod) {
+
+        List<CandidateDto> candidates = candidateService.fetchCandidatesWithFilters(positionType, militaryStatus, noticePeriod);
+        return ResponseEntity.ok(candidates);
     }
 
 }

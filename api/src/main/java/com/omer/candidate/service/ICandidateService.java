@@ -15,4 +15,6 @@ public interface ICandidateService {
     CandidateDto fetchCandidate(Long id);
 
     List<CandidateDto> fetchAllCandidates();
+
+    List<CandidateDto> fetchCandidatesWithFilters(String positionType, String militaryStatus, String noticePeriod);
 }
