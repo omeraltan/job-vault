@@ -11,6 +11,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 @OpenAPIDefinition(
@@ -44,5 +49,36 @@ public class ApiApplication implements CommandLineRunner {
         String resumesPath = System.getProperty("user.dir") + "/resumes";
         FileUtils.clearDirectory(resumesPath);
         System.out.println("Resumes directory cleared at startup.");
+
+        String uploadDir = System.getProperty("user.dir") + "/resumes";
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Veritabanı örnekleri ile PDF dosyalarını oluştur
+        createPdf("ahmet_yilmaz.pdf", uploadDir);
+        createPdf("ayse_kaya.pdf", uploadDir);
+        createPdf("mehmet_demir.pdf", uploadDir);
+        createPdf("fatma_celik.pdf", uploadDir);
+        createPdf("ali_guzel.pdf", uploadDir);
+        createPdf("zeynep_aydin.pdf", uploadDir);
+        createPdf("burak_kurt.pdf", uploadDir);
+        createPdf("elif_ozturk.pdf", uploadDir);
+        createPdf("mustafa_sarac.pdf", uploadDir);
+        createPdf("selma_turan.pdf", uploadDir);
+    }
+
+    private void createPdf(String fileName, String directoryPath) {
+        try {
+            String filePath = Paths.get(directoryPath, fileName).toString();
+            String pdfContent = "This is a PDF file for " + fileName;
+            try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                byte[] content = pdfContent.getBytes();
+                fos.write(content);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

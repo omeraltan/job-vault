@@ -7,8 +7,10 @@ import com.omer.candidate.exception.IllegalArgumentException;
 import com.omer.candidate.mapper.CandidateMapper;
 import com.omer.candidate.repository.CandidateRepository;
 import com.omer.candidate.service.ICandidateService;
+import com.omer.candidate.specification.CandidateSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -125,7 +127,10 @@ public class CandidateServiceImpl implements ICandidateService {
 
     @Override
     public CandidateDto fetchCandidate(Long id) {
-        return null;
+        Candidate candidate = candidateRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("Candidate not found with id : " + id)
+        );
+        return candidateMapper.toCandidateDto(candidate);
     }
 
     @Override
@@ -136,5 +141,18 @@ public class CandidateServiceImpl implements ICandidateService {
         }
         return candidates.stream().map(candidateMapper::toCandidateDto).collect(Collectors.toList());
     }
+
+    @Override
+    public List<CandidateDto> fetchCandidatesWithFilters(String positionType, String militaryStatus, String noticePeriod) {
+        Specification<Candidate> spec = Specification.where(CandidateSpecification.hasPositionType(positionType))
+            .and(CandidateSpecification.hasMilitaryStatus(militaryStatus))
+            .and(CandidateSpecification.hasNoticePeriod(noticePeriod));
+        List<Candidate> candidates = candidateRepository.findAll(spec);
+        if(candidates.isEmpty()){
+            throw new ResourceNotFoundException("No candidates found matching the provided filters");
+        }
+        return candidates.stream().map(candidateMapper::toCandidateDto).collect(Collectors.toList());
+    }
+
 
 }
