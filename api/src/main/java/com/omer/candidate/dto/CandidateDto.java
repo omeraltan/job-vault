@@ -1,6 +1,5 @@
 package com.omer.candidate.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.omer.candidate.annotation.FileSize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -16,6 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class CandidateDto {
 
+    @Schema(
+        description = "Id of Candidate",
+        example = "1"
+    )
+    private Long id;
     @NotEmpty(message = "First Name can not be a null or empty")
     @Size(min = 3, max = 20, message = "First Name must be between 3 and 20 characters")
     @Schema(

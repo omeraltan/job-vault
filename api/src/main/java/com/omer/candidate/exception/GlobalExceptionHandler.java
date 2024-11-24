@@ -1,7 +1,6 @@
 package com.omer.candidate.exception;
 
 import com.omer.candidate.dto.ErrorResponseDto;
-import com.omer.candidate.dto.ResponseDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

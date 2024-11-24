@@ -2,9 +2,11 @@ package com.omer.candidate.controller;
 
 import com.omer.candidate.constants.CandidatesConstants;
 import com.omer.candidate.dto.CandidateDto;
+import com.omer.candidate.dto.CandidateFilterDto;
 import com.omer.candidate.dto.ErrorResponseDto;
 import com.omer.candidate.dto.ResponseDto;
 import com.omer.candidate.service.ICandidateService;
+import com.omer.candidate.service.IFileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +15,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +44,11 @@ import static org.springframework.http.ResponseEntity.status;
 public class CandidateController {
 
     private final ICandidateService candidateService;
+    private final IFileService fileService;
 
-    public CandidateController(ICandidateService candidateService) {
+    public CandidateController(ICandidateService candidateService, IFileService fileService) {
         this.candidateService = candidateService;
+        this.fileService = fileService;
     }
 
     @Operation(
@@ -77,8 +86,8 @@ public class CandidateController {
     }
 
     @Operation(
-        summary = "Fetch all candidates",
-        description = "Fetches a list of all candidates. Throws a 404 error if no candidates are found."
+        summary = "Fetch all candidates with pagination",
+        description = "Fetches a paginated list of candidates. Throws a 404 error if no candidates are found."
     )
     @ApiResponses({
         @ApiResponse(
@@ -107,9 +116,15 @@ public class CandidateController {
         )
     })
     @GetMapping("/candidates")
-    public ResponseEntity<List<CandidateDto>> fetchAllCandidates() {
-        return ResponseEntity.ok(candidateService.fetchAllCandidates());
+    public ResponseEntity<Page<CandidateDto>> fetchAllCandidates(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CandidateDto> candidates = candidateService.fetchAllCandidates(pageable);
+        return ResponseEntity.ok(candidates);
     }
+
 
     @Operation(
         summary = "Create Candidate REST API",
@@ -129,7 +144,7 @@ public class CandidateController {
         )
     }
     )
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/candidates", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> createCandidate(@Valid @ModelAttribute CandidateDto candidateDto) {
         candidateService.createCandidate(candidateDto);
         return status(HttpStatus.CREATED)
@@ -153,7 +168,7 @@ public class CandidateController {
         @ApiResponse(responseCode = "400", description = "Validation error"),
         @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
-    @PutMapping("/update/{id}")
+    @PutMapping("/candidates/{id}")
     public ResponseEntity<ResponseDto> updateCandidate(@PathVariable Long id, @Valid @ModelAttribute CandidateDto candidateDto) {
         candidateService.updateCandidate(id, candidateDto);
         return status(HttpStatus.OK)
@@ -183,8 +198,8 @@ public class CandidateController {
         )
     }
     )
-    @DeleteMapping("/delete")
-    public ResponseEntity<ResponseDto> deleteCandidate(@RequestParam Long id) {
+    @DeleteMapping("/candidates/{id}")
+    public ResponseEntity<ResponseDto> deleteCandidate(@PathVariable Long id) {
         boolean isDeleted = candidateService.deleteCandidate(id);
         if(isDeleted) {
             return status(HttpStatus.OK)
@@ -233,13 +248,21 @@ public class CandidateController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDto.class))
         )
     })
-    public ResponseEntity<List<CandidateDto>> fetchCandidatesWithFilters(
+    public ResponseEntity<List<CandidateFilterDto>> fetchCandidatesWithFilters(
         @RequestParam(required = false) String positionType,
         @RequestParam(required = false) String militaryStatus,
         @RequestParam(required = false) String noticePeriod) {
 
-        List<CandidateDto> candidates = candidateService.fetchCandidatesWithFilters(positionType, militaryStatus, noticePeriod);
+        List<CandidateFilterDto> candidates = candidateService.fetchCandidatesWithFilters(positionType, militaryStatus, noticePeriod);
         return ResponseEntity.ok(candidates);
+    }
+
+    @GetMapping("/candidates/download-cv/{fileName}")
+    public ResponseEntity<Resource> downloadCv(@PathVariable String fileName) {
+        Resource resource = fileService.loadFileAsResource(fileName);
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+            .body(resource);
     }
 
 }

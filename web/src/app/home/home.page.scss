@@ -1,0 +1,76 @@
+.form-container {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+ion-button {
+  margin-top: 20px;
+}
+
+ion-list {
+  margin-top: 30px;
+}
+
+ion-item {
+  margin-bottom: 10px;
+}
+
+.status-message {
+  margin: 16px;
+  text-align: center;
+}
+
+.status-message.success {
+  color: green;
+}
+
+.status-message.error {
+  color: red;
+}
+
+.candidate-name {
+  margin-bottom: 8px; 
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.candidate-details {
+  div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 4px;
+
+    strong {
+      display: inline-block;
+      width: 120px; 
+      text-align: left;
+      font-weight: bold;
+    }
+
+    span {
+      margin-left: 8px;
+    }
+  }
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+}
+
+.pagination-buttons ion-button {
+  flex: 1;
+  max-width: 100px;
+}

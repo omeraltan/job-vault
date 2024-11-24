@@ -1,6 +1,9 @@
 package com.omer.candidate.service;
 
 import com.omer.candidate.dto.CandidateDto;
+import com.omer.candidate.dto.CandidateFilterDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,7 +17,8 @@ public interface ICandidateService {
 
     CandidateDto fetchCandidate(Long id);
 
-    List<CandidateDto> fetchAllCandidates();
+    Page<CandidateDto> fetchAllCandidates(Pageable pageable);
 
-    List<CandidateDto> fetchCandidatesWithFilters(String positionType, String militaryStatus, String noticePeriod);
+
+    List<CandidateFilterDto> fetchCandidatesWithFilters(String positionType, String militaryStatus, String noticePeriod);
 }
