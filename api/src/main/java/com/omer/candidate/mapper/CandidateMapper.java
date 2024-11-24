@@ -1,6 +1,7 @@
 package com.omer.candidate.mapper;
 
 import com.omer.candidate.dto.CandidateDto;
+import com.omer.candidate.dto.CandidateFilterDto;
 import com.omer.candidate.entity.Candidate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,6 +14,9 @@ public interface CandidateMapper {
 
     // Entity to DTO
     CandidateDto toCandidateDto(Candidate candidate);
+
+    // Entity to Filter DTO
+    CandidateFilterDto toCandidateFilterDto(Candidate candidate);
 
     // DTO to Entity
     @Mapping(target = "id", ignore = true)

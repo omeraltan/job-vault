@@ -8,10 +8,10 @@ public class FileUtils {
         if (directory.exists() && directory.isDirectory()) {
             for (File file : directory.listFiles()) {
                 if (file.isFile()) {
-                    file.delete(); // Dosyayı sil
+                    file.delete();
                 } else if (file.isDirectory()) {
-                    clearDirectory(file.getPath()); // Alt klasörleri temizle
-                    file.delete(); // Boş klasörü sil
+                    clearDirectory(file.getPath());
+                    file.delete();
                 }
             }
         }

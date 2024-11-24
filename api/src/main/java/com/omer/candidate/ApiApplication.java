@@ -1,5 +1,8 @@
 package com.omer.candidate;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.omer.candidate.utility.FileUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -13,7 +16,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Paths;
 
 @SpringBootApplication
@@ -56,7 +58,6 @@ public class ApiApplication implements CommandLineRunner {
             directory.mkdirs();
         }
 
-        // Veritabanı örnekleri ile PDF dosyalarını oluştur
         createPdf("ahmet_yilmaz.pdf", uploadDir);
         createPdf("ayse_kaya.pdf", uploadDir);
         createPdf("mehmet_demir.pdf", uploadDir);
@@ -70,15 +71,17 @@ public class ApiApplication implements CommandLineRunner {
     }
 
     private void createPdf(String fileName, String directoryPath) {
+        String filePath = Paths.get(directoryPath, fileName).toString();
+        Document document = new Document();
         try {
-            String filePath = Paths.get(directoryPath, fileName).toString();
-            String pdfContent = "This is a PDF file for " + fileName;
-            try (FileOutputStream fos = new FileOutputStream(filePath)) {
-                byte[] content = pdfContent.getBytes();
-                fos.write(content);
-            }
-        } catch (IOException e) {
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            document.open();
+            document.add(new Paragraph("This is a PDF file for " + fileName));
+            System.out.println("PDF created: " + filePath);
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            document.close();
         }
     }
 }

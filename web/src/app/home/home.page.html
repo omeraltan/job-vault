@@ -1,0 +1,139 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Job Vault</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="block" (click)="toggleAddCandidateForm()">
+    {{ showAddCandidateForm ? 'Close Form' : 'Add New Candidate' }}
+  </ion-button>
+
+  <ion-button expand="block" (click)="navigateToHomeFilter()" color="secondary">
+    Search Candidates
+  </ion-button>  
+
+  <div *ngIf="statusMsg" class="status-message" [class.error]="isError" [class.success]="!isError">
+    <ion-card color="light">
+      <ion-card-content>{{ statusMsg }}</ion-card-content>
+    </ion-card>
+  </div>
+
+  <ion-spinner *ngIf="isLoading" name="crescent" color="primary" class="loading-spinner"></ion-spinner>
+
+  <div *ngIf="showAddCandidateForm" class="form-container">
+    <form (ngSubmit)="candidate.id ? updateCandidate() : submitCandidate()" #candidateForm="ngForm">
+
+      <ion-item>
+        <ion-label position="floating">First Name</ion-label>
+        <ion-input [(ngModel)]="candidate.firstName" name="firstName"></ion-input>
+      </ion-item>      
+      <div *ngIf="errors?.['firstName']" class="error-message">
+        {{ errors['firstName'] }}
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Last Name</ion-label>
+        <ion-input [(ngModel)]="candidate.lastName" name="lastName"></ion-input>
+      </ion-item>
+      <div *ngIf="errors?.['lastName']" class="error-message">
+        {{ errors['lastName'] }}
+      </div>
+
+      <ion-item>
+        <ion-label>Position Type</ion-label>
+        <ion-select [(ngModel)]="candidate.positionType" name="positionType">
+          <ion-select-option *ngFor="let option of positionTypes" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Military Status</ion-label>
+        <ion-select [(ngModel)]="candidate.militaryStatus" name="militaryStatus">
+          <ion-select-option *ngFor="let option of militaryStatuses" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Notice Period</ion-label>
+        <ion-select [(ngModel)]="candidate.noticePeriod" name="noticePeriod">
+          <ion-select-option *ngFor="let option of noticePeriods" [value]="option.value">
+            {{ option.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Phone</ion-label>
+        <ion-input [(ngModel)]="candidate.phone" name="phone"></ion-input>
+      </ion-item>
+      <div *ngIf="errors?.['phone']" class="error-message">
+        {{ errors['phone'] }}
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">E-Mail</ion-label>
+        <ion-input [(ngModel)]="candidate.email" name="email" type="email"></ion-input>
+      </ion-item>
+      <div *ngIf="errors?.['email']" class="error-message">
+        {{ errors['email'] }}
+      </div>
+
+      <ion-item>
+        <ion-label>Upload Resume</ion-label>
+        <input type="file" (change)="onFileChange($event)" />
+      </ion-item>
+      <div *ngIf="errors['cv']" class="error-message">
+        {{ errors['cv'] }}
+      </div>
+
+      <div *ngIf="resumeError" class="error-message">
+        {{ resumeError }}
+      </div>
+
+      <ion-button expand="block" type="submit" color="primary">
+        {{ candidate.id ? 'Update' : 'Create' }}
+      </ion-button>
+    </form>
+  </div>
+
+  <ion-list>
+    <ion-item *ngFor="let candidate of candidates">
+      <ion-label>
+        <div class="candidate-name">
+          <strong>{{ candidate.firstName }}</strong> - <strong>{{ candidate.lastName }}</strong>
+        </div>
+        <div class="candidate-details">
+          <div>
+            <strong>Position Type</strong>: <span>{{ candidate.positionType }}</span>
+          </div>
+          <div>
+            <strong>Military Status</strong>: <span>{{ candidate.militaryStatus }}</span>
+          </div>
+          <div>
+            <strong>Notice Period</strong>: <span>{{ candidate.noticePeriod }}</span>
+          </div>
+          <div>
+            <strong>Phone</strong>: <span>{{ candidate.phone }}</span>
+          </div>
+          <div>
+            <strong>E-Mail</strong>: <span>{{ candidate.email }}</span>
+          </div>
+        </div>
+      </ion-label>
+      <ion-button fill="clear" color="tertiary" (click)="editCandidate(candidate)">Update</ion-button>
+      <ion-button fill="clear" color="danger" (click)="deleteCandidate(candidate.id!)">Delete</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <div class="pagination-buttons">
+    <ion-button (click)="previousPage()" [disabled]="currentPage <= 1">Previous</ion-button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <ion-button (click)="nextPage()" [disabled]="currentPage >= totalPages">Next</ion-button>
+  </div>
+  
+</ion-content>

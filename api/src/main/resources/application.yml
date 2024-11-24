@@ -19,3 +19,7 @@ logging:
   level:
     root: debug
 
+file:
+  upload-dir: resumes
+
+

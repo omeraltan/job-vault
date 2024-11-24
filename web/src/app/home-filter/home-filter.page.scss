@@ -1,0 +1,11 @@
+ion-select.right-aligned-arrow::part(icon) {
+    margin-inline-start: auto;
+    margin-inline-end: 0;   
+}
+
+.custom-select::part(icon) {
+    justify-content: flex-end;
+    margin-right: 0;         
+  }
+  
+  

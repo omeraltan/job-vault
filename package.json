@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/forms": "^19.0.0",
+    "@ionic/angular": "^8.4.0"
+  }
+}
